@@ -17,10 +17,10 @@ jobs:
       with:
         node-version: 18
 
-    - name: Set up Java JDK 11
+    - name: Set up Java JDK 17
       uses: actions/setup-java@v4
       with:
-        java-version: '11'
+        java-version: '17'
         distribution: 'temurin'
 
     - name: Initialize and Sync Capacitor
@@ -37,11 +37,14 @@ jobs:
         npx cap add android
         npx cap sync android
 
-    - name: Build APK with Gradle
+ - name: Build APK with Gradle
       run: |
         cd android
+        # Inject Gradle 8.5 directly into the properties file via sed text replacement
+        sed -i 's|distributionUrl=.*|distributionUrl=https\\://services.gradle.org/distributions/gradle-8.5-all.zip|' gradle/wrapper/gradle-wrapper.properties
+        
+        # Build the package natively
         ./gradlew assembleDebug
-
     - name: Upload Output APK
       uses: actions/upload-artifact@v4
       with:
