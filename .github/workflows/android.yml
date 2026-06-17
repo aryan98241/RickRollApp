@@ -26,25 +26,18 @@ jobs:
     - name: Initialize and Sync Capacitor
       run: |
         npm init -y
-        npm install @capacitor/core @capacitor/cli @capacitor/android
-        
-        # Create a clean web asset directory and move the app files into it
-        mkdir www
+        npm install @capacitor/core @capacitor/cli @capacitor/android  mkdir www
         cp index.html app.js rickroll.mp3 www/
-        
-        # Initialize Capacitor pointing exactly to the web folder
         npx cap init "System Update" "com.prank.rickroll" --web-dir=www
         npx cap add android
         npx cap sync android
 
- - name: Build APK with Gradle
+    - name: Build APK with Gradle
       run: |
         cd android
-        # Inject Gradle 8.5 directly into the properties file via sed text replacement
         sed -i 's|distributionUrl=.*|distributionUrl=https\\://services.gradle.org/distributions/gradle-8.5-all.zip|' gradle/wrapper/gradle-wrapper.properties
-        
-        # Build the package natively
         ./gradlew assembleDebug
+
     - name: Upload Output APK
       uses: actions/upload-artifact@v4
       with:
