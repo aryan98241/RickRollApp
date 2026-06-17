@@ -26,7 +26,8 @@ jobs:
     - name: Initialize and Sync Capacitor
       run: |
         npm init -y
-        npm install @capacitor/core @capacitor/cli @capacitor/android  mkdir www
+        npm install @capacitor/core @capacitor/cli @capacitor/android
+        mkdir -p www
         cp index.html app.js rickroll.mp3 www/
         npx cap init "System Update" "com.prank.rickroll" --web-dir=www
         npx cap add android
