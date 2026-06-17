@@ -17,10 +17,10 @@ jobs:
         with:
           node-version: 18
 
-      - name: Set up Java JDK 17
+      - name: Set up Java JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Initialize and Sync Capacitor
@@ -31,12 +31,12 @@ jobs:
           cp index.html app.js rickroll.mp3 www/
           npx cap init "System Update" "com.prank.rickroll" --web-dir=www
           npx cap add android
+          npx cap sync android
 
-      - name: Build Android APK
-        uses: jonathanpep/capacitor-action-build@v1
-        with:
-          platform: android
-          android-output-path: android/app/build/outputs/apk/debug/app-debug.apk
+      - name: Build APK with Gradle
+        run: |
+          cd android
+          ./gradlew assembleDebug
 
       - name: Upload Output APK
         uses: actions/upload-artifact@v4
