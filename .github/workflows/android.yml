@@ -23,13 +23,10 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Install Dependencies
+    - name: Initialize and Sync Capacitor
       run: |
-        npm install
+        npm init -y
         npm install @capacitor/core @capacitor/cli @capacitor/android
-
-    - name: Initialize Capacitor Android
-      run: |
         npx cap init "System Update" "com.prank.rickroll" --web-dir=. --confirm
         npx cap add android
         npx cap copy
