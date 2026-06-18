@@ -49,12 +49,12 @@ jobs:
       - name: Build APK with Gradle
         run: |
           cd android
-          chmod +x gradlew
           
           # Force build.gradle to automatically align legacy duplicated kotlin modules
           sed -i '/dependencies {/a \    configurations.all { resolutionStrategy.eachDependency { DependencyResolveDetails details -> if (details.requested.group == "org.jetbrains.kotlin" && details.requested.name.startsWith("kotlin-stdlib-jdk")) { details.useTarget("org.jetbrains.kotlin:kotlin-stdlib:1.8.22") } } }' app/build.gradle
           
-          ./gradlew assembleDebug --no-daemon
+          # Call the modern global system gradle tool to bypass the old embedded wrapper scripts entirely
+          gradle assembleDebug --no-daemon
 
       - name: Upload Output APK
         uses: actions/upload-artifact@v4
