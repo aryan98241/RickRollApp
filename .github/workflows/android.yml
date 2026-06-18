@@ -31,6 +31,10 @@ jobs:
           cp index.html app.js rickroll.mp3 www/
           npx cap init "System Update" "com.prank.rickroll" --web-dir=www
           npx cap add android
+          
+          # Force stable compilation SDK and build tool variables
+          sed -i 's/compileSdkVersion =.*/compileSdkVersion = 34/' android/variables.gradle
+          sed -i 's/targetSdkVersion =.*/targetSdkVersion = 34/' android/variables.gradle
           npx cap sync android
 
       - name: Build APK with Gradle
