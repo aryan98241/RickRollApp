@@ -32,18 +32,18 @@ jobs:
           npx cap init "System Update" "com.prank.rickroll" --web-dir=www
           npx cap add android
           
-          # Force stable compilation SDK and build tool variables
-          sed -i 's/compileSdkVersion =.*/compileSdkVersion = 34/' android/variables.gradle
-          sed -i 's/targetSdkVersion =.*/targetSdkVersion = 34/' android/variables.gradle
+          # Force compilation variables to SDK 35 to support VANILLA_ICE_CREAM tokens
+          sed -i 's/compileSdkVersion =.*/compileSdkVersion = 35/' android/variables.gradle
+          sed -i 's/targetSdkVersion =.*/targetSdkVersion = 35/' android/variables.gradle
+          
           npx cap sync android
 
       - name: Build APK with Gradle
         run: |
           cd android
-          sed -i 's|distributionUrl=.*|distributionUrl=https\\://services.gradle.org/distributions/gradle-8.7-all.zip|' gradle/wrapper/gradle-wrapper.properties
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon
-
+          
       - name: Upload Output APK
         uses: actions/upload-artifact@v4
         with:
