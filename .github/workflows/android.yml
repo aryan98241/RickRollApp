@@ -41,9 +41,9 @@ jobs:
       - name: Build APK with Gradle
         run: |
           cd android
-          chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
-          
+          # Use global system gradle to completely bypass the old 8.2.1 wrapper
+          gradle assembleDebug --no-daemon
+
       - name: Upload Output APK
         uses: actions/upload-artifact@v4
         with:
