@@ -28,17 +28,15 @@ jobs:
           npm init -y
           npm install @capacitor/core @capacitor/cli @capacitor/android
           mkdir -p www
-          cp index.html app.js www/ 2>/dev/null || true
-          cp rickroll.mp3 www/ 2>/dev/null || true
+          cp index.html app.js rickroll.mp3 www/ 2>/dev/null || true
           npx cap init "System Update" "com.prank.rickroll" --web-dir=www
           npx cap add android
           
-          # Force the properties file to use Gradle 8.7 text layout
-          sed -i 's|distributionUrl=.*|distributionUrl=https\\://services.gradle.org/distributions/gradle-8.7-all.zip|' android/gradle/wrapper/gradle-wrapper.properties
-          
-          # Force compilation variables to SDK 35 to support VANILLA_ICE_CREAM tokens
-          sed -i 's/compileSdkVersion =.*/compileSdkVersion = 35/' android/variables.gradle
-          sed -i 's/targetSdkVersion =.*/targetSdkVersion = 35/' android/variables.gradle
+          # Force clean SDK 35 configurations natively
+          if [ -f android/variables.gradle ]; then
+            sed -i 's/compileSdkVersion =.*/compileSdkVersion = 35/' android/variables.gradle
+            sed -i 's/targetSdkVersion =.*/targetSdkVersion = 35/' android/variables.gradle
+          fi
           
           npx cap sync android
 
@@ -46,8 +44,12 @@ jobs:
         run: |
           cd android
           chmod +x gradlew
+          
+          # Downgrade seamlessly to stable Gradle 8.4 to support Capacitor bindings
+          ./gradlew wrapper --gradle-version 8.4
+          
           ./gradlew assembleDebug --no-daemon
-
+          
       - name: Upload Output APK
         uses: actions/upload-artifact@v4
         with:
