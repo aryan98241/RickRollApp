@@ -23,6 +23,12 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+      # Forces the environment to provision a bug-free Gradle runner engine globally
+      - name: Setup Gradle Build Environment
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.7
+
       - name: Initialize and Sync Capacitor
         run: |
           npm init -y
@@ -32,7 +38,7 @@ jobs:
           npx cap init "System Update" "com.prank.rickroll" --web-dir=www
           npx cap add android
           
-          # Force clean SDK 35 configurations natively
+          # Force compilation variables to stable SDK 35 configurations natively
           if [ -f android/variables.gradle ]; then
             sed -i 's/compileSdkVersion =.*/compileSdkVersion = 35/' android/variables.gradle
             sed -i 's/targetSdkVersion =.*/targetSdkVersion = 35/' android/variables.gradle
@@ -43,12 +49,8 @@ jobs:
       - name: Build APK with Gradle
         run: |
           cd android
-          chmod +x gradlew
-          
-          # Downgrade seamlessly to stable Gradle 8.4 to support Capacitor bindings
-          ./gradlew wrapper --gradle-version 8.4
-          
-          ./gradlew assembleDebug --no-daemon
+          # Execute gradle directly to bypass the old embedded wrapper scripts completely
+          gradle assembleDebug --no-daemon
           
       - name: Upload Output APK
         uses: actions/upload-artifact@v4
